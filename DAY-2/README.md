@@ -1,138 +1,149 @@
-# 🚀 Sprint 5 – Working with Salesforce Data Using SOQL and DML
+# 🚀 Sprint 5 – Data Operations with SOQL & DML
 
-> **“Good applications do not make decisions without information. They retrieve the right data, process it, and then update the system.”**
+> **“Data is the foundation of every business decision. Effective applications know how to find it, use it, and update it.”**
 
-## 📖 About This Sprint
+## 📖 Sprint Overview
 
-**Sprint 5 – Retrieving and Managing Information with SOQL and DML** focuses on one of the most important aspects of Salesforce development: **working with data through Apex**.
+**Sprint 5** takes the Placement Management System from business-rule design into actual **Salesforce data interaction**.
 
-An application becomes useful only when it can interact with the information stored inside the platform. In a Salesforce-based Placement Management System, the application needs to retrieve student information, evaluate job requirements, create applications, and update records as the placement process progresses.
+In the previous sprint, the focus was on identifying business requirements and organizing application responsibilities. This sprint builds on that foundation by teaching Apex how to communicate with Salesforce data.
 
-This sprint introduces two fundamental technologies used for interacting with Salesforce data:
+The application now learns to:
 
-* **SOQL – Salesforce Object Query Language**
-* **DML – Data Manipulation Language**
+* Retrieve information from Salesforce.
+* Filter and work with specific records.
+* Use retrieved information in business decisions.
+* Create new records.
+* Modify existing records.
+* Remove and restore records.
+* Insert or update records using `upsert`.
+* Structure data operations with future scalability in mind.
 
-The sprint demonstrates how these technologies work together to support a complete business workflow.
+The two primary concepts covered are:
+
+**SOQL** → Retrieve Salesforce data
+**DML** → Change Salesforce data
 
 ---
 
-# 🎯 Sprint Objective
+# 🎯 Sprint Goal
 
-The objective of this sprint is to understand the complete data-processing cycle in an Apex application:
+The goal of this sprint is to understand how an Apex application interacts with Salesforce data throughout a business process.
 
 ```text
-Salesforce Data
-      ↓
-Retrieve Required Information
-      ↓
-Process Business Rules
-      ↓
+Business Requirement
+        ↓
+Identify Required Data
+        ↓
+Retrieve Data with SOQL
+        ↓
+Apply Business Rules
+        ↓
 Create / Modify Records
-      ↓
-Save Updated Information
+        ↓
+Save Changes with DML
 ```
 
-The focus is not simply on learning query syntax or DML commands, but on understanding **when and why data should be retrieved and modified**.
+The important lesson is that **data access is part of application design**, not simply a collection of database commands.
 
 ---
 
-# 📚 Learning Objectives
+# 📚 Learning Outcomes
 
-By completing this sprint, I learned how to:
+By the end of this sprint, I was able to:
 
-* Understand the role of data in enterprise applications.
-* Retrieve Salesforce records using SOQL.
-* Select only the fields required by the application.
-* Filter records using SOQL conditions.
-* Use Apex variables with SOQL queries.
-* Create Salesforce records using DML.
-* Modify existing records using DML.
+* Explain the purpose of SOQL.
+* Retrieve Salesforce records using Apex.
+* Select specific fields from Salesforce objects.
+* Filter records using conditions.
+* Use Apex variables inside SOQL queries.
+* Understand common DML operations.
+* Create Salesforce records programmatically.
+* Update existing records.
 * Delete and restore records.
-* Use `upsert` for insert-or-update scenarios.
-* Understand the relationship between data retrieval and business logic.
-* Build reusable Apex code for Salesforce data operations.
+* Use `upsert` for flexible record management.
+* Connect retrieved data with business logic.
+* Understand why inefficient SOQL and DML can cause governor-limit problems.
+* Prepare data-access logic for future bulk processing.
 
 ---
 
-# 🏢 Business Scenario – Placement Management System
+# 🏢 Project Context
 
-The project continues the development of a **Placement Management System**.
+The project continues to use a **Placement Management System** as the real-world business scenario.
 
-Consider a student applying for a company.
-
-The application cannot decide whether the student is eligible simply by receiving the application request. It needs information from multiple Salesforce records.
-
-### Student Information
-
-The system may need:
-
-* Student Name
-* CGPA
-* Branch
-* Graduation Year
-* Backlog Information
-* Placement Status
-
-### Job Information
-
-The system may need:
-
-* Job Title
-* Required CGPA
-* Eligible Branches
-* Graduation Criteria
-* Application Deadline
-* Number of Available Positions
-
-### Application Information
-
-The system may also need:
-
-* Application Status
-* Application Date
-* Student
-* Job
-* Selection Status
-
-The application therefore follows a data-driven process:
+The system manages information related to:
 
 ```text
-Student Request
-      ↓
-Retrieve Student Information
-      ↓
-Retrieve Job Requirements
-      ↓
-Compare Eligibility Rules
-      ↓
-Create / Update Application
-      ↓
-Store Result in Salesforce
+Students
+   │
+   ├── Academic Information
+   ├── Branch
+   ├── CGPA
+   └── Placement Status
+
+Jobs
+   │
+   ├── Job Title
+   ├── Eligibility Criteria
+   ├── Required CGPA
+   └── Application Deadline
+
+Applications
+   │
+   ├── Student
+   ├── Job
+   ├── Application Date
+   └── Application Status
 ```
+
+When a student applies for a job, the application needs information from these records before it can make a decision.
 
 ---
 
-# 🔎 Part 1 – Retrieving Information with SOQL
+# 🔄 Application Data Flow
+
+A typical application process looks like this:
+
+```text
+Student Application Request
+            ↓
+       Find Student
+            ↓
+         SOQL
+            ↓
+    Find Job Requirements
+            ↓
+         SOQL
+            ↓
+    Evaluate Eligibility
+            ↓
+     Create Application
+            ↓
+          DML
+            ↓
+     Salesforce Database
+```
+
+This demonstrates the relationship between **data retrieval, business logic, and data modification**.
+
+---
+
+# 🔎 Part 1 – Querying Salesforce with SOQL
 
 ## What is SOQL?
 
-**SOQL (Salesforce Object Query Language)** is used to retrieve records from Salesforce objects.
+**SOQL (Salesforce Object Query Language)** is Salesforce's query language for retrieving records from objects.
 
-It allows Apex developers to specify:
+It allows developers to define:
 
-* Which object to query
-* Which fields to retrieve
-* Which records are required
-* How the results should be filtered or ordered
+* The object being queried
+* The fields required
+* The records to retrieve
+* Filtering conditions
+* Sorting and other query requirements
 
-SOQL is similar to SQL in purpose, but it is specifically designed for the Salesforce platform and its object model.
-
----
-
-# 🧩 Basic SOQL Structure
-
-A simple SOQL query follows this pattern:
+A basic query follows this structure:
 
 ```apex
 SELECT Field1, Field2
@@ -140,21 +151,11 @@ FROM ObjectName
 WHERE Condition
 ```
 
-For example:
-
-```apex
-SELECT Name, CGPA__c, Branch__c
-FROM Student__c
-WHERE CGPA__c >= 7.0
-```
-
-This query retrieves students whose CGPA satisfies the specified condition.
-
 ---
 
-# 🎓 Retrieving a Specific Student
+# 🎓 Example – Retrieving Student Information
 
-Suppose the Placement Management System needs academic information for a particular student.
+Suppose the application needs to retrieve a student's academic details.
 
 ```apex
 Student__c student = [
@@ -164,32 +165,74 @@ Student__c student = [
 ];
 ```
 
-Here:
+The query retrieves only the information needed for the current operation.
 
-* `Student__c` is the Salesforce object.
-* `Id`, `Name`, `CGPA__c`, and `Branch__c` are the required fields.
-* `studentId` is an Apex variable.
-* `:` binds the Apex variable to the SOQL query.
+### Query Breakdown
 
-The retrieved information can then be used by the application to perform business calculations.
+| Element           | Purpose                      |
+| ----------------- | ---------------------------- |
+| `SELECT`          | Specifies fields to retrieve |
+| `Name`            | Student name                 |
+| `CGPA__c`         | Academic score               |
+| `Branch__c`       | Student branch               |
+| `FROM Student__c` | Specifies the object         |
+| `WHERE`           | Filters records              |
+| `:studentId`      | Apex bind variable           |
 
 ---
 
-# 🎯 Querying Only Required Information
+# 🎯 Filtering Records
 
-A good query should retrieve only the information needed by the application.
+SOQL can be used to retrieve records matching a particular business condition.
 
-### Avoid unnecessary fields
+For example:
 
 ```apex
-SELECT Id, Name, CGPA__c, Branch__c, Graduation_Year__c
+List<Student__c> eligibleStudents = [
+    SELECT Id, Name, CGPA__c
+    FROM Student__c
+    WHERE CGPA__c >= 7.0
+];
+```
+
+This query retrieves students whose CGPA meets the specified threshold.
+
+The important point is that the query retrieves the **information**, while the application can then use that information to perform additional business processing.
+
+---
+
+# 🔗 Using Apex Variables in SOQL
+
+Apex variables can be referenced inside SOQL using the `:` bind syntax.
+
+```apex
+Id studentId = someStudentId;
+
+Student__c student = [
+    SELECT Id, Name, CGPA__c
+    FROM Student__c
+    WHERE Id = :studentId
+];
+```
+
+This allows the query to work dynamically with values supplied by the application.
+
+---
+
+# 🎯 Query Only What Is Required
+
+Efficient Salesforce development means avoiding unnecessary data retrieval.
+
+Instead of retrieving many fields:
+
+```apex
+SELECT Id, Name, CGPA__c, Branch__c, Graduation_Year__c,
+       Phone__c, Email__c
 FROM Student__c
 WHERE Id = :studentId
 ```
 
-If the application only needs the student's CGPA and branch, retrieving additional fields may be unnecessary.
-
-A better approach is:
+if the application only needs CGPA and branch, it can use:
 
 ```apex
 SELECT Id, CGPA__c, Branch__c
@@ -197,69 +240,47 @@ FROM Student__c
 WHERE Id = :studentId
 ```
 
-This keeps data access focused and easier to maintain.
+This keeps the query focused and helps reduce unnecessary resource consumption.
 
 ---
 
-# 🧠 SOQL and Business Logic
-
-SOQL itself does not decide whether a student is eligible.
-
-Its responsibility is to provide the information required by the business logic.
-
-For example:
-
-```text
-SOQL
- ↓
-Retrieve CGPA
- ↓
-Retrieve Branch
- ↓
-Retrieve Job Requirements
- ↓
-Business Logic
- ↓
-Determine Eligibility
-```
-
-This separation makes the application easier to understand and maintain.
-
----
-
-# ✏️ Part 2 – Managing Salesforce Records with DML
+# ✏️ Part 2 – Changing Salesforce Data with DML
 
 ## What is DML?
 
-**DML (Data Manipulation Language)** is used to perform operations that change Salesforce data.
+**DML (Data Manipulation Language)** is used by Apex to perform operations that modify Salesforce records.
 
-DML allows Apex to:
+Common operations include:
 
-* Create records
-* Modify records
-* Remove records
-* Restore deleted records
-* Insert or update records
-* Combine duplicate records where supported
+```text
+insert
+update
+delete
+undelete
+upsert
+merge
+```
 
----
-
-# 📋 Common DML Operations
-
-| DML Operation | Purpose                    |
-| ------------- | -------------------------- |
-| `insert`      | Creates new records        |
-| `update`      | Modifies existing records  |
-| `delete`      | Removes records            |
-| `undelete`    | Restores deleted records   |
-| `upsert`      | Inserts or updates records |
-| `merge`       | Combines duplicate records |
+These operations allow Apex to interact with Salesforce data beyond simply reading it.
 
 ---
 
-# ➕ Creating a Record with Insert
+# 📋 DML Operations
 
-Suppose a new student needs to be added to Salesforce.
+| Operation  | Purpose                     |
+| ---------- | --------------------------- |
+| `insert`   | Creates a new record        |
+| `update`   | Changes an existing record  |
+| `delete`   | Removes a record            |
+| `undelete` | Restores a deleted record   |
+| `upsert`   | Inserts or updates a record |
+| `merge`    | Combines duplicate records  |
+
+---
+
+# ➕ Creating a Student Record
+
+A new Salesforce record can be created using `insert`.
 
 ```apex
 Student__c student = new Student__c();
@@ -271,15 +292,13 @@ student.Branch__c = 'Computer Science';
 insert student;
 ```
 
-The `insert` statement sends the new record to the Salesforce database.
-
-After a successful insert, Salesforce assigns the record an `Id`.
+After the successful operation, Salesforce assigns an `Id` to the newly created record.
 
 ---
 
-# ✏️ Updating an Existing Record
+# ✏️ Updating a Record
 
-Before updating a record, the application normally retrieves it.
+An existing record can be retrieved, modified, and saved.
 
 ```apex
 Student__c student = [
@@ -296,50 +315,44 @@ update student;
 The process is:
 
 ```text
-Retrieve Record
-      ↓
-Modify Field
-      ↓
-Update Record
+Retrieve
+   ↓
+Modify
+   ↓
+Update
 ```
 
-This demonstrates how SOQL and DML work together.
+This is one of the most common SOQL + DML workflows in Apex.
 
 ---
 
-# 🗑️ Deleting Records
+# 🗑️ Removing a Record
 
-A record can be removed using the `delete` operation.
+A record can be deleted using:
 
 ```apex
-Student__c student = [
-    SELECT Id
-    FROM Student__c
-    LIMIT 1
-];
-
 delete student;
 ```
 
-The record is moved to the Salesforce Recycle Bin and can potentially be restored.
+Salesforce generally moves the deleted record to the Recycle Bin rather than permanently removing it immediately.
 
 ---
 
-# ♻️ Restoring Records
+# ♻️ Restoring a Record
 
-Deleted records can be restored using `undelete`.
+A deleted record can be restored using:
 
 ```apex
 undelete student;
 ```
 
-This is useful when a record was removed accidentally or needs to be restored as part of a business process.
+This can be useful when records are removed accidentally or need to be restored as part of an application process.
 
 ---
 
-# 🔄 Upsert
+# 🔄 Using Upsert
 
-`upsert` is useful when the application needs to either create a new record or update an existing record.
+`upsert` is useful when the application does not want to handle insert and update as two completely separate operations.
 
 ```apex
 upsert student;
@@ -348,24 +361,24 @@ upsert student;
 Conceptually:
 
 ```text
-Record Exists?
-     /       \
-   Yes        No
-    ↓          ↓
- Update      Insert
+           Record
+              ↓
+       Does it already exist?
+          /            \
+        Yes             No
+         ↓               ↓
+      Update           Insert
 ```
 
-This can simplify data synchronization scenarios.
+This is particularly useful in scenarios involving data synchronization.
 
 ---
 
-# 🏗️ Complete Placement Application Flow
+# 🏗️ Complete Placement Application Example
 
-SOQL and DML become more meaningful when combined into a complete business process.
+SOQL and DML become more useful when combined with the business logic from Sprint 4.
 
-For example, when a student applies for a job:
-
-### Step 1 – Retrieve Student
+## Step 1 – Retrieve Student
 
 ```apex
 Student__c student = [
@@ -375,7 +388,7 @@ Student__c student = [
 ];
 ```
 
-### Step 2 – Retrieve Job
+## Step 2 – Retrieve Job
 
 ```apex
 Job__c job = [
@@ -385,16 +398,22 @@ Job__c job = [
 ];
 ```
 
-### Step 3 – Evaluate Eligibility
+## Step 3 – Evaluate Eligibility
 
 ```apex
 Boolean eligible =
     student.CGPA__c >= job.Required_CGPA__c;
 ```
 
-Additional business rules can be applied for branch, graduation year, backlogs, or other requirements.
+Additional rules can be added for:
 
-### Step 4 – Create Application
+* Branch
+* Graduation year
+* Backlogs
+* Application deadline
+* Placement status
+
+## Step 4 – Create the Application
 
 ```apex
 Application__c application =
@@ -410,66 +429,86 @@ insert application;
 The complete process becomes:
 
 ```text
-Student
-   │
-   ▼
-SOQL
-   │
-   ▼
-Student Information
-   │
-   ├───────────────┐
-   │               │
-   ▼               ▼
-Job Information   Eligibility Rules
-   │               │
-   └───────┬───────┘
-           ▼
-      Application
-           │
-           ▼
-          DML
-           │
-           ▼
-    Salesforce Database
+┌───────────────────┐
+│ Student Request   │
+└─────────┬─────────┘
+          ↓
+┌───────────────────┐
+│ Retrieve Student  │
+│      SOQL         │
+└─────────┬─────────┘
+          ↓
+┌───────────────────┐
+│ Retrieve Job      │
+│      SOQL         │
+└─────────┬─────────┘
+          ↓
+┌───────────────────┐
+│ Business Rules    │
+│ Eligibility Check │
+└─────────┬─────────┘
+          ↓
+┌───────────────────┐
+│ Create Application│
+│       DML         │
+└─────────┬─────────┘
+          ↓
+┌───────────────────┐
+│ Salesforce Data   │
+└───────────────────┘
 ```
 
 ---
 
-# 🔐 Data Access and Application Design
+# 🧠 Data Retrieval vs Business Logic
 
-A well-designed Salesforce application should not treat data access as an isolated activity.
+A key concept from this sprint is that **SOQL and business logic have different responsibilities**.
 
-The application should clearly separate:
+### SOQL
+
+Answers:
+
+> “What information do we have?”
+
+### Business Logic
+
+Answers:
+
+> “What should we do with that information?”
+
+### DML
+
+Answers:
+
+> “How do we save the result?”
+
+Therefore:
 
 ```text
-Data Retrieval
-      ↓
-Business Processing
-      ↓
-Data Modification
+SOQL
+ ↓
+Get Information
+ ↓
+Business Logic
+ ↓
+Make Decision
+ ↓
+DML
+ ↓
+Save Result
 ```
 
-This separation provides several benefits:
-
-* Easier maintenance
-* Better readability
-* Reusable logic
-* Easier testing
-* Clearer responsibilities
-* Improved scalability
-
-This approach also prepares the project for later topics such as **Triggers, Bulkification, and Service Layer Architecture**.
+This separation provides a clean foundation for future Apex architecture.
 
 ---
 
-# ⚠️ Important Apex Considerations
+# ⚠️ Writing Efficient Apex
 
-Although SOQL and DML are powerful, they consume Salesforce resources.
+SOQL and DML are governed by Salesforce platform limits.
 
-Developers should therefore avoid inefficient patterns such as:
+Therefore, developers should avoid inefficient database operations.
 
-### ❌ SOQL Inside a Loop
+## ❌ Query Inside a Loop
 
 ```apex
 for (Application__c app : applications) {
@@ -483,9 +522,9 @@ for (Application__c app : applications) {
 }
 ```
 
-This can consume Salesforce Governor Limits rapidly.
+This approach can generate a large number of SOQL queries.
 
-### ❌ DML Inside a Loop
+## ❌ DML Inside a Loop
 
 ```apex
 for (Application__c app : applications) {
@@ -493,15 +532,56 @@ for (Application__c app : applications) {
 }
 ```
 
-A better approach is to collect records and perform a single bulk operation.
+Repeated DML operations can also consume governor-limit resources.
 
-These concepts become the foundation for the next stage of the project:
-
-> **Sprint 7 – Bulk Processing & Governor Limits**
+These problems become the central focus of the later **Bulk Processing & Governor Limits** sprint.
 
 ---
 
-# 🗂️ Example Project Structure
+# 🏛️ Data Service Layer
+
+The service classes introduced in Sprint 4 can now begin handling data operations.
+
+```text
+ApplicationService
+        │
+        ├── Retrieve Student
+        │       ↓
+        │      SOQL
+        │
+        ├── Retrieve Job
+        │       ↓
+        │      SOQL
+        │
+        └── Save Application
+                ↓
+               DML
+```
+
+Example:
+
+```apex
+public class ApplicationService {
+
+    public static void submitApplication(
+        Id studentId,
+        Id jobId
+    ) {
+
+        // Retrieve data
+        // Apply business rules
+        // Create application
+        // Perform DML
+
+    }
+}
+```
+
+This provides a foundation for the Trigger Handler and Service Layer architecture introduced in later sprints.
+
+---
+
+# 📂 Project Structure
 
 ```text
 force-app/
@@ -520,74 +600,98 @@ force-app/
             └── Application__c/
 ```
 
-The service classes can later be extended to centralize SOQL and DML operations.
-
 ---
 
-# 🧪 Practical Learning Activities
+# 🧪 Sprint Practice
 
-During this sprint, the following activities can be practiced:
+## SOQL Practice
 
-### SOQL
-
-* Retrieve a student by Id.
-* Retrieve students based on CGPA.
+* Retrieve a student using an Id.
+* Find students above a specific CGPA.
 * Filter students by branch.
-* Retrieve job requirements.
-* Query application records.
-* Use bind variables in Apex SOQL.
+* Retrieve job eligibility requirements.
+* Retrieve existing applications.
+* Use Apex bind variables.
+* Select only required fields.
 
-### DML
+## DML Practice
 
-* Insert a Student record.
+* Insert a new Student record.
 * Update student information.
-* Delete an unnecessary record.
+* Create a Job record.
+* Modify an existing Job.
+* Create an Application record.
+* Delete a record.
 * Restore a deleted record.
-* Use `upsert` for record synchronization.
-* Create placement applications.
+* Experiment with `upsert`.
 
 ---
 
 # 📊 SOQL vs DML
 
-| Feature                        | SOQL          | DML                |
-| ------------------------------ | ------------- | ------------------ |
-| Purpose                        | Retrieve data | Modify data        |
-| Reads Records                  | ✅             | ❌                  |
-| Creates Records                | ❌             | ✅                  |
-| Updates Records                | ❌             | ✅                  |
-| Deletes Records                | ❌             | ✅                  |
-| Used Before Business Decisions | ✅             | Sometimes          |
-| Example                        | `SELECT`      | `insert`, `update` |
+| Category         | SOQL           | DML                |
+| ---------------- | -------------- | ------------------ |
+| Main Purpose     | Retrieve data  | Modify data        |
+| Reads Records    | ✅              | ❌                  |
+| Creates Records  | ❌              | ✅                  |
+| Updates Records  | ❌              | ✅                  |
+| Deletes Records  | ❌              | ✅                  |
+| Restores Records | ❌              | ✅                  |
+| Example          | `SELECT`       | `insert`, `update` |
+| Primary Role     | Data retrieval | Data modification  |
 
-A simple way to remember the difference:
+### Easy way to remember:
 
 ```text
-SOQL → Read Salesforce Data
+SOQL = Read
 
-DML  → Change Salesforce Data
+DML = Change
 ```
 
 ---
 
-# 🎤 Interview Questions
+# 💡 Engineering Lessons
 
-This sprint provides a foundation for common Salesforce interview questions:
+### 1. Data Drives Decisions
+
+Business logic cannot make reliable decisions without the required information.
+
+### 2. Retrieve Only What You Need
+
+Focused queries are easier to understand and more efficient.
+
+### 3. Keep Responsibilities Separate
+
+Data retrieval, business rules, and data modification should have clear roles.
+
+### 4. Database Operations Need Careful Design
+
+Every SOQL query and DML operation consumes platform resources.
+
+### 5. Think About Scale Early
+
+Even simple Apex should be written with future bulk-processing requirements in mind.
+
+---
+
+# 🎤 Interview Preparation
+
+Questions covered by this sprint include:
 
 1. What is SOQL?
-2. How is SOQL different from SQL?
-3. What is DML in Salesforce?
+2. What is the difference between SOQL and SQL?
+3. What is DML?
 4. What are the different DML operations?
 5. What is the difference between `insert` and `upsert`?
-6. When would you use `undelete`?
-7. What is a bind variable in SOQL?
-8. Why should only required fields be queried?
-9. Why is SOQL inside a loop considered bad practice?
-10. Why should DML not be performed repeatedly inside loops?
-11. How do SOQL and DML work together in an Apex application?
-12. How would you retrieve a related record before applying business logic?
-13. What happens when a DML operation fails?
-14. How can SOQL and DML be designed for bulk processing?
+6. What is a bind variable?
+7. Why should developers retrieve only required fields?
+8. Why should SOQL not be placed inside loops?
+9. Why should DML not be placed inside loops?
+10. How do SOQL and DML work together?
+11. How would you retrieve a student's eligibility information?
+12. How would you create an application record using Apex?
+13. What happens when a DML operation encounters an error?
+14. How can SOQL and DML be optimized for bulk processing?
 
 ---
 
@@ -597,74 +701,60 @@ This sprint provides a foundation for common Salesforce interview questions:
 * **Apex**
 * **SOQL**
 * **DML**
-* **Salesforce Objects**
+* **Salesforce Custom Objects**
 * **Salesforce Developer Console**
 * **Visual Studio Code**
 * **Salesforce CLI**
 
 ---
 
-# 💡 Engineering Principles Learned
+# 🚀 Next Stage
 
-This sprint introduced several important engineering principles:
+The concepts introduced in this sprint prepare the Placement Management System for **Apex Triggers**.
 
-### 1. Data Comes Before Decisions
-
-Business logic needs reliable information before it can make decisions.
-
-### 2. Query What You Need
-
-Efficient applications retrieve only the fields and records required for the task.
-
-### 3. Separate Data Access from Business Logic
-
-Retrieving information and applying business rules should have clear responsibilities.
-
-### 4. Database Operations Must Be Controlled
-
-SOQL and DML consume Salesforce resources and should therefore be used carefully.
-
-### 5. Design for Future Scale
-
-Even when working with a small number of records, Apex should be written with bulk processing in mind.
-
----
-
-# 🚀 Key Takeaways
-
-The most important concepts learned during Sprint 5 are:
-
-* **SOQL is used to retrieve Salesforce data.**
-* **DML is used to create and modify Salesforce records.**
-* **Business logic depends on accurate and relevant data.**
-* **SOQL and DML work together to implement complete business workflows.**
-* **Efficient data access is essential in Salesforce because of Governor Limits.**
-* **Data access code should be organized and reusable.**
-* **Bulk-safe thinking should begin even before working with Triggers.**
-
----
-
-# 🔮 Next Sprint
-
-The next stage builds upon the data-handling concepts introduced here.
-
-### Sprint 6 – Apex Triggers
-
-The application will learn to respond automatically to Salesforce events such as:
+The next development stage will move from manually executing business operations to **event-driven automation**.
 
 ```text
-Record Created
+Data Operation
       ↓
-Record Updated
+Record Event
       ↓
-Trigger Executes
+Apex Trigger
       ↓
-Business Logic Runs
+Business Logic
       ↓
-Application Responds Automatically
+Automatic Action
 ```
 
-This will introduce **event-driven Salesforce development** and prepare the project for the following sprint on **Bulk Processing & Governor Limits**.
+After that, the project will progress toward:
+
+```text
+SOQL & DML
+    ↓
+Apex Triggers
+    ↓
+Bulk Processing
+    ↓
+Governor Limits
+    ↓
+Asynchronous Apex
+```
+
+---
+
+# 📈 Key Takeaways
+
+Sprint 5 introduced the application's **data-access layer**.
+
+The major lessons are:
+
+* SOQL allows Apex to retrieve Salesforce information.
+* DML allows Apex to modify Salesforce records.
+* Retrieved information can be passed into business logic.
+* Business decisions should be based on relevant and current data.
+* Database operations should be efficient and intentional.
+* Service classes provide a useful place for organizing data operations.
+* Bulk-safe development should be considered from the beginning.
 
 ---
 
@@ -684,7 +774,7 @@ This will introduce **event-driven Salesforce development** and prepare the proj
 * Apex Programming
 * Lightning Web Components
 * SOQL & DML
-* Trigger Automation
+* Salesforce Automation
 * Backend Development
 * Enterprise Application Development
 
@@ -692,20 +782,20 @@ This will introduce **event-driven Salesforce development** and prepare the proj
 
 # ⭐ Sprint Summary
 
-Sprint 5 represents an important step in the development of the Placement Management System.
+Sprint 5 moves the Placement Management System from **business-rule design to real data interaction**.
 
-The application moves from simply storing information to actively **retrieving, processing, and managing business data**.
+The application can now follow a complete data-driven process:
 
 ```text
-Store Data
-    ↓
-Retrieve Data with SOQL
-    ↓
-Apply Business Logic
-    ↓
-Modify Data with DML
-    ↓
-Build a Useful Application
+Identify Requirement
+        ↓
+Retrieve Salesforce Data
+        ↓
+Process Business Rules
+        ↓
+Create / Modify Records
+        ↓
+Persist the Result
 ```
 
-> **“A Salesforce application becomes intelligent when it can retrieve the right information, make meaningful decisions, and update the system reliably.”**
+> **“The quality of an application depends not only on the decisions it makes, but also on how efficiently it retrieves and manages the information behind those decisions.”**
