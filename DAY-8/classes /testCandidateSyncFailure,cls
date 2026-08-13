@@ -1,0 +1,68 @@
+@IsTest
+static void testCandidateSyncFailure() {
+
+    // Create Student
+    Student__c student = new Student__c(
+        Name = 'Test Student',
+        Email__c = 'teststudent@example.com',
+        Branch__c = 'CSE',
+        CGPA__c = 8
+    );
+
+    insert student;
+
+    // Create Job
+    Job__c job = new Job__c(
+        Name = 'Developer',
+        Company__c = 'Test Company',
+        Role__c = 'Salesforce Developer'
+    );
+
+    insert job;
+
+    // Create Application
+    Application__c application = new Application__c(
+        Student__c = student.Id,
+        Job__c = job.Id,
+        Status__c = 'Selected',
+        Integration_Status__c = 'Pending'
+    );
+
+    insert application;
+
+    // Set mock HTTP failure response
+    Test.setMock(
+        HttpCalloutMock.class,
+        new CandidateSyncFailureMock()
+    );
+
+    Test.startTest();
+
+    // Execute Queueable
+    System.enqueueJob(
+        new CandidateSyncQueueable(application.Id)
+    );
+
+    Test.stopTest();
+
+    // Get updated Application
+    Application__c result = [
+        SELECT Integration_Status__c,
+               Integration_Error__c
+        FROM Application__c
+        WHERE Id = :application.Id
+    ];
+
+    // Verify integration status
+    System.assertEquals(
+        'Retry Required',
+        result.Integration_Status__c
+    );
+
+    // Verify error message
+    System.assert(
+        result.Integration_Error__c.contains(
+            'External Server Error'
+        )
+    );
+}
