@@ -1,0 +1,64 @@
+<template>
+
+    <lightning-card title="Eligible Jobs">
+
+        <div class="slds-p-around_medium">
+
+            <!-- Loading -->
+            <template if:true={isLoading}>
+
+                <lightning-spinner
+                    alternative-text="Loading jobs">
+                </lightning-spinner>
+
+            </template>
+
+
+            <!-- Error -->
+            <template if:true={error}>
+
+                <p class="slds-text-color_error">
+                    Unable to load eligible jobs.
+                </p>
+
+            </template>
+
+
+            <!-- Job Cards -->
+            <template if:true={hasJobs}>
+
+                <template
+                    for:each={jobs}
+                    for:item="job">
+
+                    <div
+                        key={job.Id}
+                        class="slds-m-bottom_medium">
+
+                        <c-job-card
+                            job={job}
+                            onviewdetails={handleViewDetails}
+                            onapply={handleApply}>
+                        </c-job-card>
+
+                    </div>
+
+                </template>
+
+            </template>
+
+
+            <!-- Empty State -->
+            <template if:true={showEmptyState}>
+
+                <p>
+                    No eligible jobs found.
+                </p>
+
+            </template>
+
+        </div>
+
+    </lightning-card>
+
+</template>
