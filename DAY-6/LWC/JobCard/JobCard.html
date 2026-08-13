@@ -1,0 +1,87 @@
+<template>
+
+    <lightning-card
+        title={job.Name}
+        icon-name="standard:job_profile">
+
+        <div class="slds-p-around_medium">
+
+            <p class="slds-m-bottom_small">
+
+                <strong>Job:</strong>
+                {job.Name}
+
+            </p>
+
+
+            <p class="slds-m-bottom_small">
+
+                <strong>Minimum CGPA:</strong>
+                {job.Minimum_CGPA__c}
+
+            </p>
+
+
+            <p class="slds-m-bottom_medium">
+
+                <strong>Deadline:</strong>
+                {job.Deadline__c}
+
+            </p>
+
+
+            <lightning-button
+                label="View Details"
+                variant="neutral"
+                onclick={handleViewDetails}
+                class="slds-m-right_small">
+            </lightning-button>
+
+
+            <lightning-button
+                label={applyButtonLabel}
+                variant="brand"
+                disabled={isApplyDisabled}
+                onclick={handleApply}>
+            </lightning-button>
+
+
+            <template if:true={isApplying}>
+
+                <div class="slds-m-top_medium">
+
+                    <lightning-spinner
+                        alternative-text="Submitting application"
+                        size="small">
+                    </lightning-spinner>
+
+                    <p class="slds-m-top_small">
+                        Submitting your application...
+                    </p>
+
+                </div>
+
+            </template>
+
+
+            <template if:true={applicationSubmitted}>
+
+                <div class="slds-m-top_medium">
+
+                    <div class="slds-notify slds-notify_alert slds-alert_success">
+
+                        <span>
+                            ✓ APPLICATION SUBMITTED
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </template>
+
+        </div>
+
+    </lightning-card>
+
+</template>
