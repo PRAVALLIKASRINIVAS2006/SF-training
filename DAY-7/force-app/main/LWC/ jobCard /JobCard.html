@@ -1,0 +1,41 @@
+<template>
+
+    <lightning-card title={job.Name}>
+
+        <div class="slds-p-around_medium">
+
+            <p class="slds-m-bottom_small">
+                <strong>Minimum CGPA:</strong>
+                {job.Minimum_CGPA__c}
+            </p>
+
+            <template if:true={job.Last_Date__c}>
+
+                <p class="slds-m-bottom_small">
+                    <strong>Last Date:</strong>
+                    {job.Last_Date__c}
+                </p>
+
+            </template>
+
+            <div class="slds-m-top_medium">
+
+                <lightning-button
+                    label="View Details"
+                    onclick={handleViewDetails}>
+                </lightning-button>
+
+                <lightning-button
+                    class="slds-m-left_small"
+                    label="Apply"
+                    variant="brand"
+                    onclick={handleApply}>
+                </lightning-button>
+
+            </div>
+
+        </div>
+
+    </lightning-card>
+
+</template>
