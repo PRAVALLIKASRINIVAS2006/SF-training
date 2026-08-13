@@ -1,0 +1,121 @@
+<template>
+
+    <lightning-card
+        title="Eligible Jobs"
+        icon-name="standard:job_profile">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+
+            <div class="slds-p-around_large slds-text-align_center">
+
+                <lightning-spinner
+                    alternative-text="Loading eligible jobs"
+                    size="medium">
+                </lightning-spinner>
+
+                <p class="slds-m-top_medium">
+                    Loading eligible jobs...
+                </p>
+
+            </div>
+
+        </template>
+
+
+        <!-- Error -->
+        <template if:true={hasError}>
+
+            <div class="slds-p-around_medium">
+
+                <div class="slds-notify slds-notify_alert slds-alert_error">
+
+                    <lightning-icon
+                        icon-name="utility:error"
+                        size="small"
+                        alternative-text="Error"
+                        class="slds-m-right_small">
+                    </lightning-icon>
+
+                    <span>
+                        {errorMessage}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </template>
+
+
+        <!-- Empty -->
+        <template if:true={showEmptyState}>
+
+            <div class="slds-p-around_large slds-text-align_center">
+
+                <lightning-icon
+                    icon-name="utility:info"
+                    size="small"
+                    alternative-text="Information">
+                </lightning-icon>
+
+                <p class="slds-m-top_small">
+                    No eligible jobs are currently available.
+                </p>
+
+            </div>
+
+        </template>
+
+
+        <!-- Jobs -->
+        <template if:true={showJobs}>
+
+            <div class="slds-p-around_medium">
+
+                <template
+                    for:each={jobs}
+                    for:item="job">
+
+                    <c-job-card
+                        key={job.Id}
+                        job={job}
+                        is-applying={job.isApplying}
+                        application-submitted={job.applicationSubmitted}
+                        onapply={handleApply}>
+                    </c-job-card>
+
+                </template>
+
+            </div>
+
+        </template>
+
+
+        <!-- Success -->
+        <template if:true={showSuccessMessage}>
+
+            <div class="slds-p-around_medium">
+
+                <div class="slds-notify slds-notify_alert slds-alert_success">
+
+                    <lightning-icon
+                        icon-name="utility:success"
+                        size="small"
+                        alternative-text="Success"
+                        class="slds-m-right_small">
+                    </lightning-icon>
+
+                    <span>
+                        {successMessage}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </template>
+
+    </lightning-card>
+
+</template>
