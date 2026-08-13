@@ -1,0 +1,86 @@
+<template>
+
+    <lightning-card title="Student Profile">
+
+        <div class="slds-p-around_medium">
+
+            <template if:true={isLoading}>
+
+                <lightning-spinner
+                    alternative-text="Loading student profile">
+                </lightning-spinner>
+
+            </template>
+
+            <template if:false={isLoading}>
+
+                <template if:true={studentName}>
+
+                    <p class="slds-m-bottom_medium">
+                        <strong>Student Name:</strong>
+                        {studentName}
+                    </p>
+
+                    <lightning-input
+                        type="number"
+                        label="CGPA"
+                        value={cgpa}
+                        min="0"
+                        max="10"
+                        step="0.01"
+                        required
+                        onchange={handleCgpaChange}>
+                    </lightning-input>
+
+                    <div class="slds-m-top_medium">
+
+                        <lightning-button
+                            label="Save"
+                            variant="brand"
+                            onclick={handleSave}
+                            disabled={isSaving}>
+                        </lightning-button>
+
+                    </div>
+
+                    <template if:true={isSaving}>
+
+                        <p class="slds-m-top_small">
+                            Saving...
+                        </p>
+
+                    </template>
+
+                    <template if:true={successMessage}>
+
+                        <p class="slds-text-color_success slds-m-top_medium">
+                            {successMessage}
+                        </p>
+
+                    </template>
+
+                    <template if:true={errorMessage}>
+
+                        <p class="slds-text-color_error slds-m-top_medium">
+                            {errorMessage}
+                        </p>
+
+                    </template>
+
+                </template>
+
+                <template if:false={studentName}>
+
+                    <p class="slds-text-color_error">
+                        {errorMessage}
+                    </p>
+
+                </template>
+
+            </template>
+
+        </div>
+
+    </lightning-card>
+
+</template>
